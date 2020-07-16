@@ -10,7 +10,7 @@ import {
   Link,
   Typography
 } from '@material-ui/core';
-
+import firebase from '../../config'
 
 const schema = {
   email: {
@@ -163,10 +163,24 @@ const SignIn = props => {
       }
     }));
   };
+  
+  const guest = () =>{
+    history.push('/calender-public');
+  }
 
   const handleSignIn = event => {
     event.preventDefault();
-    history.push('/');
+    firebase.auth().signInWithEmailAndPassword(formState.values.email, formState.values.password)
+    .then((res)=>{
+      const { uid, email } = res.user
+      localStorage.setItem("uid", uid);
+      localStorage.setItem("email", email);
+      history.push('/');
+    })
+    .catch(function(error) {
+      var errorMessage = error.message;
+      alert(errorMessage)
+    });
   };
 
   const hasError = field =>
@@ -243,6 +257,17 @@ const SignIn = props => {
                   variant="contained"
                 >
                   Sign in now
+                </Button>
+                <Button
+                  className={classes.signInButton}
+                  color="primary"
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  onClick ={guest}
+                >
+                  Sign in as guest
                 </Button>
                 <Typography
                   color="textSecondary"

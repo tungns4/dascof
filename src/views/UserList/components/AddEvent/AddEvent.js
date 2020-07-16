@@ -50,6 +50,9 @@ const useStyles = makeStyles(theme => ({
 
 const AddEvent = forwardRef((props, ref) => {
   const {
+    publicFlag,
+    start,
+    end,
     event,
     onDelete,
     onCancel,
@@ -62,11 +65,11 @@ const AddEvent = forwardRef((props, ref) => {
   const classes = useStyles();
 
   const defaultEvent = {
-    title: 'Event title',
-    desc: 'Event description',
-    allDay: false,
-    start: moment().toDate(),
-    end: moment().toDate()
+    title: 'class',
+    linkClass: '',
+    publicFlag: publicFlag,
+    start: start,
+    end: end
   };
 
   const [values, setValues] = useState(event || defaultEvent);
@@ -87,7 +90,7 @@ const AddEvent = forwardRef((props, ref) => {
   };
 
   const handleAdd = () => {
-    if (!values.title || !values.desc) {
+    if (!values.title) {
       return;
     }
 
@@ -95,7 +98,7 @@ const AddEvent = forwardRef((props, ref) => {
   };
 
   const handleEdit = () => {
-    if (!values.title || !values.desc) {
+    if (!values.title) {
       return;
     }
 
@@ -120,32 +123,39 @@ const AddEvent = forwardRef((props, ref) => {
           <TextField
             className={classes.field}
             fullWidth
-            label="Title"
+            label="Title class"
             name="title"
             onChange={handleFieldChange}
             value={values.title}
             variant="outlined"
           />
-          <TextField
-            className={classes.field}
-            fullWidth
-            label="Description"
-            name="desc"
-            onChange={handleFieldChange}
-            value={values.desc}
-            variant="outlined"
-          />
-          <FormControlLabel
-            className={classes.field}
-            control={
-              <Switch
-                checked={values.allDay}
-                name="allDay"
-                onChange={handleFieldChange}
-              />
-            }
-            label="All day"
-          />
+          {
+            mode === 'edit' &&
+            <TextField
+              className={classes.field}
+              fullWidth
+              label="Link class"
+              name="linkClass"
+              disabled
+              value={values.linkClass}
+              variant="outlined"
+            />
+          }
+          {
+            mode === 'add' &&
+            <FormControlLabel
+              className={classes.field}
+              control={
+                <Switch
+                  checked={values.publicFlag}
+                  name="publicFlag"
+                  onChange={handleFieldChange}
+                />
+              }
+              label="Public"
+            />
+          }
+          
           <TextField
             className={classes.field}
             defaultValue={moment(values.start).format('YYYY-MM-DDThh:mm:ss')}
@@ -159,7 +169,7 @@ const AddEvent = forwardRef((props, ref) => {
           <TextField
             className={classes.field}
             defaultValue={moment(values.end).format('YYYY-MM-DDThh:mm:ss')}
-            disabled={values.allDay}
+            // disabled={values.publicFlag}
             fullWidth
             label="End date"
             name="end"

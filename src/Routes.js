@@ -41,7 +41,7 @@ const Routes = () => {
         component={ProductListView}
         exact
         layout={MainLayout}
-        path="/products"
+        path="/calender-public"
       />
       <RouteWithLayout
         component={TypographyView}

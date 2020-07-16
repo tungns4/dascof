@@ -14,6 +14,7 @@ import {
   Typography
 } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import firebase, {db} from '../../config'
 
 const schema = {
   firstName: {
@@ -186,8 +187,23 @@ const SignUp = props => {
   };
 
   const handleSignUp = event => {
+    const { email, password, firstName, lastName } = formState.values
+    console.log( email, password )
     event.preventDefault();
-    history.push('/');
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(()=>{
+      const {uid, email} = firebase.auth().currentUser
+      db.collection("users").doc(uid).set({
+        name: firstName + lastName,
+        email : email,
+      }).then(()=>{
+        history.push('/');
+      })
+    })
+    .catch(function(error) {
+      var errorMessage = error.message;
+      alert(errorMessage)
+    });
   };
 
   const hasError = field =>
@@ -205,29 +221,6 @@ const SignUp = props => {
           lg={5}
         >
           <div className={classes.quote}>
-            <div className={classes.quoteInner}>
-              <Typography
-                className={classes.quoteText}
-                variant="h1"
-              >
-                Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
-                they sold out High Life.
-              </Typography>
-              <div className={classes.person}>
-                <Typography
-                  className={classes.name}
-                  variant="body1"
-                >
-                  Takamaru Ayako
-                </Typography>
-                <Typography
-                  className={classes.bio}
-                  variant="body2"
-                >
-                  Manager at inVision
-                </Typography>
-              </div>
-            </div>
           </div>
         </Grid>
         <Grid

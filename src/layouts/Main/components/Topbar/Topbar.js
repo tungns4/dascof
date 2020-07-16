@@ -3,9 +3,9 @@ import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { AppBar, Toolbar, Hidden, IconButton } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+import { AppBar, Toolbar, Link, IconButton, Typography} from '@material-ui/core';
 import InputIcon from '@material-ui/icons/Input';
+import firebase from '../../../../config'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,12 +20,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Topbar = props => {
-  const { className, onSidebarOpen, ...rest } = props;
+  const { className, onSidebarOpen,history, ...rest } = props;
 
   const classes = useStyles();
 
   const onLogOut = () => {
-    
+    firebase.auth().signOut().then(function() {
+      localStorage.removeItem('uid')
+      localStorage.removeItem('email')
+      // Sign-out successful.
+    }).catch(function(error) {
+      // An error happened.
+    });
+    // history
   }
 
   return (
@@ -33,26 +40,50 @@ const Topbar = props => {
       {...rest}
       className={clsx(classes.root, className)}
     >
+      <RouterLink to="/" >
+
+      </RouterLink>
       <Toolbar>
-        <RouterLink to="/" />
+        <div style ={{ marginRight: '2vw'}}>
+          <Typography
+            variant="caption"
+          >
+            <Link
+              color={'secondary'}
+              component={RouterLink}
+              to="/calender"
+              variant="h6"
+            >
+              Calender
+            </Link>
+          </Typography>
+        </div>
+        <div>
+          <Typography
+            variant="caption"
+          >
+            <Link
+              color={'secondary'}
+              component={RouterLink}
+              to="/calender-public"
+              variant="h6"
+            >
+              Calender public
+            </Link>
+          </Typography>
+          
+        </div>
+        
         <div className={classes.flexGrow} />
-        <Hidden mdDown>
+        <RouterLink to="/sign-in" >
           <IconButton
-            className={classes.signOutButton}
-            color="inherit"
-            onClick={onLogOut}
-          >
-            <InputIcon />
+              className={classes.signOutButton}
+              color="secondary"
+              onClick={onLogOut}
+            >
+              <InputIcon />
           </IconButton>
-        </Hidden>
-        <Hidden lgUp>
-          <IconButton
-            color="inherit"
-            onClick={onSidebarOpen}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
+        </RouterLink>
       </Toolbar>
     </AppBar>
   );
