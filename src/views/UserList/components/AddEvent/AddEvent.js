@@ -36,10 +36,28 @@ const useStyles = makeStyles(theme => ({
   field: {
     marginTop: theme.spacing(3)
   },
+  field2: {
+    marginTop: theme.spacing(3),
+    width: '80%'
+  },
   cancelButton: {
     marginLeft: 'auto'
   },
   confirmButton: {
+    color: theme.palette.white,
+    backgroundColor: colors.green[600],
+    '&:hover': {
+      backgroundColor: colors.green[900]
+    }
+  },
+  join: {
+    marginTop: theme.spacing(4),
+    float: "right",
+    textAlign: "center",
+    width: "20%"
+  },
+  joinClass: {
+    
     color: theme.palette.white,
     backgroundColor: colors.green[600],
     '&:hover': {
@@ -85,6 +103,21 @@ const AddEvent = forwardRef((props, ref) => {
     }));
   };
 
+  const joinClass = (values) => {
+    const {linkClass, start, end } = values
+    const now = new Date()
+    if (now.getTime() >= new Date(start).getTime() && now.getTime() <= new Date(end).getTime()){
+      window.open(linkClass)
+    } else {
+      if (now.getTime() < new Date(start).getTime()){
+        alert('Lớp học chưa bắt đầu')
+      }
+      if(now.getTime() > new Date(end).getTime()){
+        alert('Lớp học đã kết thúc')
+      }
+    }
+  }
+
   const handleDelete = () => {
     onDelete && onDelete(event);
   };
@@ -121,6 +154,7 @@ const AddEvent = forwardRef((props, ref) => {
             {mode === 'add' ? 'Add Event' : 'Edit Event'}
           </Typography>
           <TextField
+            required
             className={classes.field}
             fullWidth
             label="Title class"
@@ -131,15 +165,27 @@ const AddEvent = forwardRef((props, ref) => {
           />
           {
             mode === 'edit' &&
-            <TextField
-              className={classes.field}
-              fullWidth
-              label="Link class"
-              name="linkClass"
-              disabled
-              value={values.linkClass}
-              variant="outlined"
-            />
+            <>
+              <TextField
+                className={classes.field2}
+                fullWidth
+                label="Link class"
+                name="linkClass"
+                disabled
+                value={values.linkClass}
+                variant="outlined"
+              />
+              <div className ={classes.join}>
+                <Button
+                  className={classes.joinClass}
+                  // href={values.linkClass}
+                  onClick={() => joinClass(values)}
+                  variant="contained"
+                >
+                  Join class
+                </Button>
+              </div>
+            </>
           }
           {
             mode === 'add' &&
